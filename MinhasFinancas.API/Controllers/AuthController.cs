@@ -27,7 +27,7 @@ namespace MinhasFinancas.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> SignIn([FromBody] SignInDto request)
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             var identityUser = await _userManager.FindByEmailAsync(request.Email);
 
@@ -45,7 +45,7 @@ namespace MinhasFinancas.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] SignUpDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             var user = new Usuario
             {
@@ -78,32 +78,6 @@ namespace MinhasFinancas.API.Controllers
 
             var response = await BuildAuthResponse(user);
 
-            return Ok(response);
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> Me()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userId is null)
-                return NotFound("Usuário não encontrado");
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user is null)
-                return NotFound("Usuário não encontrado");
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var response = new UserDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.NomeCompleto,
-                Roles = roles.ToList()
-            };
             return Ok(response);
         }
 

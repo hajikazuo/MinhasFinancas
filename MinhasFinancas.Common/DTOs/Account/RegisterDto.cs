@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MinhasFinancas.Common.DTOs.Account
 {
-    public class SignUpDto
+    public class RegisterDto
     {
         [EmailAddress(ErrorMessage = "Email inválido.")]
         [Required(ErrorMessage = "O email é obrigatório.")] 

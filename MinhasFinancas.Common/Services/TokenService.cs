@@ -25,6 +25,7 @@ namespace MinhasFinancas.Common.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim(ClaimTypes.Name, usuario.NomeCompleto ?? string.Empty),
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString())
             };
 
