@@ -5,6 +5,7 @@ using MinhasFinancas.Blazor;
 using MinhasFinancas.Blazor.Handlers;
 using MinhasFinancas.Common.Services;
 using MinhasFinancas.Common.Services.Interfaces;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -32,5 +33,7 @@ builder.Services.AddScoped(sp =>
 
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();

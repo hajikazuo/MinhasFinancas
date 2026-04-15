@@ -1,16 +1,77 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
+
+<MudThemeProvider Theme="@_currentTheme" IsDarkMode="@_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="@((e) => DrawerToggle())" />
+
+        <MudSpacer />
+
+        <MudIconButton Icon="@(_isDarkMode? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)"
+                       Color="Color.Inherit"
+                       OnClick="ToggleDarkMode" />
+
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="top-row px-4">
-            <a class="btn btn-link" href="/logout">Sair</a>
-        </div>
-
-        <article class="content px-4">
+    <MudMainContent>
+        <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = true;
+    bool _isDarkMode = true;
+
+    private MudTheme _lightTheme = new()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#6C63FF",
+            Secondary = "#03DAC6",
+            Background = "#F5F6FA",
+            Surface = "#FFFFFF",
+            AppbarBackground = "#6C63FF",
+            AppbarText = "#FFFFFF",
+            TextPrimary = "#1C1C1C"
+        }
+    };
+
+    private MudTheme _darkTheme = new()
+    {
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#8C7BFF",
+            Secondary = "#03DAC6",
+            Background = "#121212",
+            Surface = "#1E1E1E",
+            AppbarBackground = "#1E1E1E",
+            AppbarText = "#FFFFFF",
+            TextPrimary = "#E0E0E0"
+        }
+    };
+
+    private MudTheme _currentTheme => _isDarkMode ? _darkTheme : _lightTheme;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+}

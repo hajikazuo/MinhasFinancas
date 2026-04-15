@@ -8,77 +8,101 @@
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Navigation
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h3>Minhas Finanças</h3>
-                    <p class="mb-0">Faça login para continuar</p>
-                </div>
-                <div class="card-body">
-                    <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
-                        <DataAnnotationsValidator />
+<MudGrid Justify="Justify.Center" Class="mt-6">
+    <MudItem xs="12" sm="8" md="5" lg="4">
 
-                        @if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            <div class="alert alert-danger">@errorMessage</div>
-                        }
+        <MudPaper Class="pa-6" Elevation="4">
 
-                        <div class="mb-3">
-                            <label class="form-label">E-mail</label>
-                            <InputText class="form-control" @bind-Value="loginModel.Email" />
-                            <ValidationMessage For="@(() => loginModel.Email)" class="text-danger" />
-                        </div>
+            <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">
+                Minhas Finanças
+            </MudText>
 
-                        <div class="mb-3">
-                            <label class="form-label">Senha</label>
-                            <InputText type="password" class="form-control" @bind-Value="loginModel.Password" />
-                            <ValidationMessage For="@(() => loginModel.Password)" class="text-danger" />
-                        </div>
+            <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mb-4">
+                Faça login para continuar
+            </MudText>
 
-                        <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
-                            @(isLoading ? "Entrando..." : "Entrar")
-                        </button>
-                    </EditForm>
-                </div>
-                <div class="card-footer text-center">
-                    <small>Não tem conta? <a href="/cadastro">Cadastre-se</a></small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+            <MudForm @ref="_form">
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-3">
+                        @errorMessage
+                    </MudAlert>
+                }
+
+                <MudTextField T="string"
+                              Label="E-mail"
+                              @bind-Value="loginModel.Email"
+                              Required="true"
+                              RequiredError="E-mail é obrigatório"
+                              Variant="Variant.Filled"
+                              Class="mb-3" />
+
+                <MudTextField T="string"
+                              Label="Senha"
+                              @bind-Value="loginModel.Password"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Senha é obrigatória"
+                              Variant="Variant.Filled"
+                              Class="mb-4" />
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Disabled="@isLoading"
+                           OnClick="HandleLogin">
+
+                    @(isLoading ? "Entrando..." : "Entrar")
+
+                </MudButton>
+
+            </MudForm>
+
+            <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-4">
+                Não tem conta?
+                <MudLink Href="/cadastro">Cadastre-se</MudLink>
+            </MudText>
+
+        </MudPaper>
+
+    </MudItem>
+</MudGrid>
 
 @code {
     private LoginDto loginModel = new();
     private bool isLoading = false;
     private string errorMessage = string.Empty;
+    private MudForm? _form;
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
     private async Task HandleLogin()
     {
+        await _form!.ValidateAsync();
+
+        if (!_form.IsValid)
+            return;
+
         isLoading = true;
         errorMessage = string.Empty;
 
         try
         {
             var httpClient = HttpClientFactory.CreateClient("ApiClient");
-            
-            var response = await httpClient.PostAsJsonAsync("api/auth/login", loginModel);
 
+            var response = await httpClient.PostAsJsonAsync("api/auth/login", loginModel);
 
             if (response.IsSuccessStatusCode)
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-                
+
                 if (authResponse?.AuthToken != null)
                 {
                     var provider = (CustomAuthStateProvider)AuthProvider;
                     await provider.MarkUserAsAuthenticated(authResponse.AuthToken);
-                    
+
                     var redirectUrl = string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl;
                     Navigation.NavigateTo(redirectUrl, forceLoad: true);
                 }
@@ -92,9 +116,9 @@
                 errorMessage = "Erro ao fazer login. Tente novamente.";
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            errorMessage = $"Erro de conexão com o servidor: {ex.Message}";
+            errorMessage = $"Erro de conexão: {ex.Message}";
         }
         finally
         {
