@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinhasFinancas.Common.Data;
@@ -16,13 +15,11 @@ namespace MinhasFinancas.API.Controllers
     public class TransacoesController : ControllerBase
     {
         private readonly MinhasFinancasDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ICombProvider _comb;
 
-        public TransacoesController(MinhasFinancasDbContext context, IMapper mapper, ICombProvider comb)
+        public TransacoesController(MinhasFinancasDbContext context, ICombProvider comb)
         {
             _context = context;
-            _mapper = mapper;
             _comb = comb;
         }
 
@@ -115,10 +112,22 @@ namespace MinhasFinancas.API.Controllers
                     return BadRequest("Usuário não identificado");
                 }
 
-                var transacao = _mapper.Map<Transacao>(dto);
-                transacao.TransacaoId = _comb.Create();
-                transacao.UsuarioId = userId;
-                transacao.DataCadastro = DateTime.Now;
+                var transacao = new Transacao
+                {
+                    TransacaoId = _comb.Create(),
+                    UsuarioId = userId,
+                    CategoriaId = dto.CategoriaId,
+                    Descricao = dto.Descricao,
+                    Valor = dto.Valor,
+                    DataCadastro = DateTime.Now,
+                    DataPagamento = dto.DataPagamento,
+                    FrequenciaRecorrencia = dto.FrequenciaRecorrencia,
+                    QtdRepeticoes = dto.QtdRepeticoes,
+                    TipoTransacao = dto.TipoTransacao,
+                    TipoPagamento = dto.TipoPagamento
+                };
+
+                transacao.DefinirStatus();
 
                 _context.Transacoes.Add(transacao);
                 await _context.SaveChangesAsync();
@@ -136,7 +145,18 @@ namespace MinhasFinancas.API.Controllers
         {
             try
             {
-                var transacao = _mapper.Map<Transacao>(dto);
+                var transacao = await _context.Transacoes.FindAsync(id);
+                if (transacao == null)
+                    return NotFound("Transação não encontrada");
+
+                transacao.CategoriaId = dto.CategoriaId;
+                transacao.Descricao = dto.Descricao;
+                transacao.Valor = dto.Valor;
+                transacao.DataPagamento = dto.DataPagamento;
+                transacao.FrequenciaRecorrencia = dto.FrequenciaRecorrencia;
+                transacao.QtdRepeticoes = dto.QtdRepeticoes;
+                transacao.TipoPagamento = dto.TipoPagamento;
+                transacao.DefinirStatus();
                 _context.Update(transacao);
                 await _context.SaveChangesAsync();
                 return Ok("Alterado com sucesso");

@@ -32,5 +32,12 @@ namespace MinhasFinancas.Domain.Models
 
         public virtual Usuario? Usuario { get; set; }    
         public virtual Categoria? Categoria { get; set; }
+
+        public void DefinirStatus()
+        {
+            Status = DataPagamento.HasValue
+                ? StatusTransacao.Concluida
+                : StatusTransacao.Pendente;
+        }
     }
 }

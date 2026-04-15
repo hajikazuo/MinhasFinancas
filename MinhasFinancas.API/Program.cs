@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MinhasFinancas.API;
-using MinhasFinancas.API.Mappings;
 using MinhasFinancas.Common.Data;
 using MinhasFinancas.Common.Services;
 using MinhasFinancas.Common.Services.Interfaces;
 using MinhasFinancas.Domain.Models.Usuarios;
 using Scalar.AspNetCore;
-using System.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +30,6 @@ builder.Services.AddDbContext<MinhasFinancasDbContext>(options =>
 builder.Services.AddSingleton(RT.Comb.Provider.Sql);
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISeedService, SeedService>();
-builder.Services.AddAutoMapper(typeof(EntitiesToDTOMappingProfile));
 
 builder.Services.AddIdentityCore<Usuario>()
                .AddRoles<Funcao>()

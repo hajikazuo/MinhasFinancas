@@ -6,7 +6,7 @@ namespace MinhasFinancas.Domain.Models.Enums
 {
     public enum FrequenciaRecorrencia: byte
     {
-        SemRecorrencia,
+        SemRecorrencia = 0,
         Diaria = 1,
         Semanal = 2,
         Quinzenal = 3,

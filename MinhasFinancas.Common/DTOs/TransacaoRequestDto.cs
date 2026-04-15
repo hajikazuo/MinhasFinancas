@@ -25,10 +25,6 @@ namespace MinhasFinancas.Common.DTOs
         [Required(ErrorMessage = "TipoTransacao é obrigatório")]
         public TipoTransacao TipoTransacao { get; set; }
 
-        [Required(ErrorMessage = "Status é obrigatório")]
-        public StatusTransacao Status { get; set; }
-
-
         [Required(ErrorMessage = "TipoPagamento é obrigatório")]
         public TipoPagamento TipoPagamento { get; set; }
     }
