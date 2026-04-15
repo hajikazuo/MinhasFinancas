@@ -7,7 +7,6 @@ using MinhasFinancas.Common.Data;
 using MinhasFinancas.Common.Services;
 using MinhasFinancas.Common.Services.Interfaces;
 using MinhasFinancas.Domain.Models.Usuarios;
-using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -77,13 +76,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapOpenApi();
-app.MapScalarApiReference(options =>
+app.UseSwaggerUI(options =>
 {
-    options.Title = "Minhas Finanças API";
-    options.DarkMode = true;
-    options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
-    options.AddPreferredSecuritySchemes("Bearer");
-    options.EnablePersistentAuthentication();
+    options.SwaggerEndpoint("/openapi/v1.json", "Minhas Finanças API v1");
 });
 
 

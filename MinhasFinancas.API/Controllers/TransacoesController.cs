@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MinhasFinancas.Common.Data;
 using MinhasFinancas.Common.DTOs;
 using MinhasFinancas.Domain.Models;
+using MinhasFinancas.Domain.Models.Enums;
 using RT.Comb;
 using System.Security.Claims;
 
@@ -24,7 +25,7 @@ namespace MinhasFinancas.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int? mes, int? ano)
+        public async Task<IActionResult> Get(int? mes, int? ano, TipoTransacao? tipo)
         {
             var dataAtual = DateTime.Now;
             mes = mes ?? dataAtual.Month;
@@ -38,8 +39,15 @@ namespace MinhasFinancas.API.Controllers
                 return BadRequest("Usuário não identificado");
             }
 
-            var response = await _context.Transacoes
-                .Where(t => t.UsuarioId == userId && t.DataCadastro >= dataInicial && t.DataCadastro <= dataFinal)
+            var query = _context.Transacoes
+                .Where(t => t.UsuarioId == userId && t.DataCadastro >= dataInicial && t.DataCadastro <= dataFinal).AsQueryable();
+                
+            if(tipo.HasValue)
+            {
+                query = query.Where(t => t.TipoTransacao == tipo.Value);
+            }
+
+            var response = await query
                 .Select(t => new TransacaoResponseDto
                 {
                     TransacaoId = t.TransacaoId,
@@ -129,7 +137,7 @@ namespace MinhasFinancas.API.Controllers
 
                 transacao.DefinirStatus();
 
-                _context.Transacoes.Add(transacao);
+                await _context.Transacoes.AddAsync(transacao);
                 await _context.SaveChangesAsync();
 
                 return Ok("Cadastrado com sucesso");
@@ -157,7 +165,6 @@ namespace MinhasFinancas.API.Controllers
                 transacao.QtdRepeticoes = dto.QtdRepeticoes;
                 transacao.TipoPagamento = dto.TipoPagamento;
                 transacao.DefinirStatus();
-                _context.Update(transacao);
                 await _context.SaveChangesAsync();
                 return Ok("Alterado com sucesso");
             }
