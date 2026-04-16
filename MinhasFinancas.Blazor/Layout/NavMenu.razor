@@ -1,12 +1,11 @@
-﻿<MudPaper Width="250px" Class="py-3" Elevation="0">
-    <MudNavMenu>
-        <MudText Typo="Typo.h6" Class="px-4">Minhas finanças</MudText>
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-        <MudNavGroup Title="Transações" Expanded="false">
-            <MudNavLink Href="/transacoes/despesas" Match="NavLinkMatch.Prefix">Despesas</MudNavLink>
-            <MudNavLink Href="/transacoes/receitas" Match="NavLinkMatch.Prefix">Receitas</MudNavLink>
-        </MudNavGroup>
-        <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix">Sair</MudNavLink>
-    </MudNavMenu>
-</MudPaper>
+﻿<MudDrawerHeader>
+    <MudText Typo="Typo.h5" Class="mt-1">Minhas finanças</MudText>
+</MudDrawerHeader>
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+    <MudNavGroup Title="Transações" Expanded="false">
+        <MudNavLink Href="/transacoes/despesas" Match="NavLinkMatch.Prefix">Despesas</MudNavLink>
+        <MudNavLink Href="/transacoes/receitas" Match="NavLinkMatch.Prefix">Receitas</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix">Sair</MudNavLink>
+</MudNavMenu>

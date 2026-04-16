@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="@_currentTheme" IsDarkMode="@_isDarkMode" />
 <MudPopoverProvider />
@@ -6,7 +6,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
@@ -20,7 +20,7 @@
 
     </MudAppBar>
 
-    <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="2">
         <NavMenu />
     </MudDrawer>
 
@@ -53,13 +53,18 @@
     {
         PaletteDark = new PaletteDark()
         {
-            Primary = "#8C7BFF",
-            Secondary = "#03DAC6",
-            Background = "#121212",
-            Surface = "#1E1E1E",
-            AppbarBackground = "#1E1E1E",
-            AppbarText = "#FFFFFF",
-            TextPrimary = "#E0E0E0"
+            Primary = "#7e6fff",
+            Background = "#14141f",
+            Surface = "#1a1a27",
+            DrawerBackground = "#1a1a27",
+            BackgroundGray = "#151521",
+            AppbarText = "#92929f",
+            AppbarBackground = "rgba(26,26,39,0.8)",
+            TextPrimary = "#b2b0bf",
+            TextSecondary = "#92929f",
+            TextDisabled = "#ffffff33",
+            Divider = "#292838",
+            LinesDefault = "#33323e",
         }
     };
 
