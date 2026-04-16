@@ -1,8 +1,126 @@
 ﻿@page "/"
 @attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Small" Class="my-8">
+    <MudCard Elevation="3" Class="pa-6">
+        <MudCardContent>
+            <!-- Dropdown Centralizado -->
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12" sm="8" md="6">
+                    <MudSelect T="string"
+                               Label="Selecione o mês"
+                               @bind-Value="selectedMonth"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Class="mb-6">
+                        @foreach (var month in months)
+                        {
+                            <MudSelectItem Value="@month">@month</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
 
-<h1>Hello, world!</h1>
+            <!-- Saldo Atual -->
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudPaper Class="pa-6 text-center" Elevation="2">
+                        <MudText Typo="Typo.h5" Class="mb-2">Saldo Atual</MudText>
+                        <MudText Typo="Typo.h3"
+                                 Color="@(currentBalance >= 0 ? Color.Success : Color.Error)"
+                                 Class="font-bold">
+                            @FormatCurrency(currentBalance)
+                        </MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
 
-Welcome to your new app.
+            <!-- Receitas e Despesas -->
+            <MudGrid Justify="Justify.Center" Class="mt-6">
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="2" Class="pa-4 text-center">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp"
+                                 Size="Size.Large"
+                                 Color="Color.Success"
+                                 Class="mb-2" />
+                        <MudText Typo="Typo.h6" Class="mb-1">Receitas</MudText>
+                        <MudText Typo="Typo.h5" Color="Color.Success" Class="font-bold">
+                            @FormatCurrency(totalRevenue)
+                        </MudText>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="2" Class="pa-4 text-center">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingDown"
+                                 Size="Size.Large"
+                                 Color="Color.Error"
+                                 Class="mb-2" />
+                        <MudText Typo="Typo.h6" Class="mb-1">Despesas</MudText>
+                        <MudText Typo="Typo.h5" Color="Color.Error" Class="font-bold">
+                            @FormatCurrency(totalExpense)
+                        </MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private string selectedMonth;
+    private List<string> months = new List<string>
+    {
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    };
+    
+    private decimal currentBalance = 12500.50m;
+    private decimal totalRevenue = 18500.75m;
+    private decimal totalExpense = 6000.25m;
+
+    protected override void OnInitialized()
+    {
+        // Seta o mês atual como padrão
+        var currentMonth = DateTime.Now.Month;
+        selectedMonth = months[currentMonth - 1];
+        
+        // Carrega os dados baseado no mês selecionado
+        LoadDataForMonth(selectedMonth);
+    }
+
+    private void LoadDataForMonth(string month)
+    {
+        // Dados mockados - você pode substituir pela sua lógica real
+        switch (month)
+        {
+            case "Janeiro":
+                totalRevenue = 18500.75m;
+                totalExpense = 6000.25m;
+                break;
+            case "Fevereiro":
+                totalRevenue = 19200.50m;
+                totalExpense = 5800.00m;
+                break;
+            case "Março":
+                totalRevenue = 20100.00m;
+                totalExpense = 6200.50m;
+                break;
+            case "Abril":
+                totalRevenue = 17800.25m;
+                totalExpense = 5900.75m;
+                break;
+            default:
+                totalRevenue = 18500.75m;
+                totalExpense = 6000.25m;
+                break;
+        }
+        
+        currentBalance = totalRevenue - totalExpense;
+    }
+
+    private string FormatCurrency(decimal value)
+    {
+        return value.ToString("C", new System.Globalization.CultureInfo("pt-BR"));
+    }
+}
