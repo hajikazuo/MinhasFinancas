@@ -1,8 +1,5 @@
 ﻿using Microsoft.JSInterop;
 using MinhasFinancas.Common.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace MinhasFinancas.Common.Services
