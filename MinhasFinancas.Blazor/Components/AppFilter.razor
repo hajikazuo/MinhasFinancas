@@ -1,0 +1,79 @@
+﻿<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="int"
+                   Label="Mês"
+                   @bind-Value="selectedMonth"
+                   Variant="Variant.Outlined"
+                   Margin="Margin.Dense"
+                   FullWidth>
+            @foreach (var month in months)
+            {
+                <MudSelectItem Value="@month.Key">@month.Value</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6">
+        <MudSelect T="int"
+                   Label="Ano"
+                   @bind-Value="selectedYear"
+                   Variant="Variant.Outlined"
+                   Margin="Margin.Dense"
+                   FullWidth>
+            @foreach (var year in availableYears)
+            {
+                <MudSelectItem Value="@year">@year</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private Dictionary<int, string> months = new()
+    {
+        { 1, "Janeiro" }, { 2, "Fevereiro" }, { 3, "Março" },
+        { 4, "Abril" }, { 5, "Maio" }, { 6, "Junho" },
+        { 7, "Julho" }, { 8, "Agosto" }, { 9, "Setembro" },
+        { 10, "Outubro" }, { 11, "Novembro" }, { 12, "Dezembro" }
+    };
+    
+    private List<int> availableYears = new();
+    private int selectedMonth;
+    private int selectedYear;
+    
+    [Parameter]
+    public EventCallback<(int Month, int Year)> OnDateChanged { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        InitializeYears();
+        
+        selectedMonth = DateTime.Now.Month;
+        selectedYear = DateTime.Now.Year;
+    }
+    
+    private void InitializeYears()
+    {
+        var currentYear = DateTime.Now.Year;
+        for (int i = currentYear - 2; i <= currentYear + 2; i++)
+        {
+            availableYears.Add(i);
+        }
+    }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            NotifyDateChanged();
+        }
+    }
+    
+    private async void NotifyDateChanged()
+    {
+        if (OnDateChanged.HasDelegate)
+        {
+            await OnDateChanged.InvokeAsync((selectedMonth, selectedYear));
+        }
+    }
+}

@@ -1,31 +1,192 @@
 ﻿@page "/transacoes/{tipo}"
+@using MinhasFinancas.Blazor.Components
 @using MinhasFinancas.Common.DTOs
 @using MinhasFinancas.Common.Models.Enums
+@attribute [Authorize]
 @inject IHttpClientFactory HttpClientFactory
 
-<h3>@TipoEnum</h3>
+<AppBreadcrumb Items="_items" />
+
+<MudGrid Justify="Justify.Center" Class="my-8">
+    
+    <MudItem xs="12">
+        <MudCard Elevation="3">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-4">Filtros</MudText>
+                <AppFilter OnDateChanged="OnDateChanged" />
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudCard Elevation="3">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-4">Resumo</MudText>
+                
+                @if (isLoading)
+                {
+                    <MudProgressCircular Indeterminate="true" Class="my-4" />
+                }
+                else
+                {
+                    <MudPaper Class="pa-6 text-center" Elevation="2">
+                        <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2">
+                            Total de @TipoEnum
+                        </MudText>
+                        <MudText Class="text-h6 text-sm-h5 text-md-h3 font-bold"
+                                 Color="@(TipoEnum == TipoTransacao.Receita ? Color.Success : Color.Error)">
+                            @FormatCurrency(totalTransacoes)
+                        </MudText>
+                        <MudText Typo="Typo.caption" Class="mt-2">
+                            @transacoes.Count transação(ões) encontrada(s)
+                        </MudText>
+                    </MudPaper>
+                }
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudCard Elevation="3">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    Lista de @TipoEnum - @GetMonthName(selectedMonth)/@selectedYear
+                </MudText>
+
+                @if (isLoading)
+                {
+                    <div Class="d-flex justify-center align-center" Style="min-height: 300px;">
+                        <MudProgressCircular Indeterminate="true" />
+                    </div>
+                }
+                else if (transacoes.Any())
+                {
+                    <MudTable Items="@transacoes"
+                              Hover="true"
+                              Breakpoint="Breakpoint.Sm"
+                              Elevation="0"
+                              Dense="true">
+                        <HeaderContent>
+                            <MudTh>Data</MudTh>
+                            <MudTh>Descrição</MudTh>
+                            <MudTh>Categoria</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Pagamento</MudTh>
+                            <MudTh Class="text-right">Valor</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            @{
+                                var dataExibicao = context.DataPagamento.HasValue ? 
+                                    context.DataPagamento.Value.ToString("dd/MM/yyyy") : 
+                                    context.DataCadastro.ToString("dd/MM/yyyy");
+                            }
+                            <MudTd>@dataExibicao</MudTd>
+                            <MudTd>@context.Descricao</MudTd>
+                            <MudTd>@context.Categoria</MudTd>
+                            <MudTd>@context.Status</MudTd>
+                            <MudTd>@context.TipoPagamento</MudTd>
+                            <MudTd Class="text-right">
+                                <MudText Color="@(TipoEnum == TipoTransacao.Receita ? Color.Success : Color.Error)">
+                                    @FormatCurrency(context.Valor)
+                                </MudText>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Info">
+                        Nenhuma transação encontrada para este período.
+                    </MudAlert>
+                }
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+</MudGrid>
 
 @code {
     [Parameter]
     public string? tipo { get; set; }
 
-    public TipoTransacao TipoEnum { get; set; }
+    private TipoTransacao TipoEnum { get; set; }
+    private int selectedMonth { get; set; }
+    private int selectedYear { get; set; }
+    private bool isLoading = false;
+    private List<TransacaoResponseDto> transacoes = new();
+    private decimal totalTransacoes = 0;
 
+    private List<BreadcrumbItem> _items => new()
+    {
+        new("Home", href: "/"),
+        new("Transações", href: "/transacoes"),
+        new($"{TipoEnum}", href: null, disabled: true)
+    };
+    
+    [Inject]
+    private ISnackbar Snackbar { get; set; }
+    
     protected override async Task OnParametersSetAsync()
     {
         if (!Enum.TryParse<TipoTransacao>(tipo, true, out var result))
+        {
+            Snackbar.Add("Tipo de transação inválido", Severity.Error);
             return;
-
+        }
+        
         TipoEnum = result;
-
-        await CarregarDados();
+        _items[2] = new($"{TipoEnum}", href: null, disabled: true);
+        
+        await LoadData(DateTime.Now.Month, DateTime.Now.Year);
     }
 
-    private async Task CarregarDados()
+    private async Task OnDateChanged((int Month, int Year) date)
     {
-        var httpClient = HttpClientFactory.CreateClient("ApiClient");
+        await LoadData(date.Month, date.Year);
+    }
 
-        var response = await httpClient.GetFromJsonAsync<List<TransacaoResponseDto>>(
-            $"api/Transacoes/Get?tipo={TipoEnum}");
+    private async Task LoadData(int month, int year)
+    {
+        selectedMonth = month;
+        selectedYear = year;
+        isLoading = true;
+        transacoes = new List<TransacaoResponseDto>();
+        totalTransacoes = 0;
+        StateHasChanged();
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiClient");
+
+            var response = await httpClient.GetFromJsonAsync<List<TransacaoResponseDto>>(
+                $"api/Transacoes/Get?tipo={TipoEnum}&month={month}&year={year}");
+            
+            if (response != null)
+            {
+                transacoes = response;
+                totalTransacoes = transacoes.Sum(t => t.Valor);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao carregar transações: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private string GetMonthName(int month)
+    {
+        var months = new[] { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" };
+        return months[month - 1];
+    }
+    
+    private string FormatCurrency(decimal value)
+    {
+        return value.ToString("C", new System.Globalization.CultureInfo("pt-BR"));
     }
 }

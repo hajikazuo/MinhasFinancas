@@ -20,9 +20,14 @@ namespace MinhasFinancas.Blazor
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var token = await _localStorage.GetAsync<string>("authToken");
-            var identity = string.IsNullOrEmpty(token)
-                ? new ClaimsIdentity()
-                : new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+
+            if (string.IsNullOrEmpty(token) || !IsTokenValid(token))
+            {
+                await _localStorage.RemoveAsync("authToken");
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+
+            var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
@@ -48,6 +53,25 @@ namespace MinhasFinancas.Blazor
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(jwt);
             return token.Claims;
+        }
+
+        private bool IsTokenValid(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            if (!handler.CanReadToken(token))
+                return false;
+
+            var jwt = handler.ReadJwtToken(token);
+
+            var exp = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp)?.Value;
+
+            if (exp == null)
+                return false;
+
+            var expDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(exp)).UtcDateTime;
+
+            return expDate > DateTime.UtcNow;
         }
     }
 }
