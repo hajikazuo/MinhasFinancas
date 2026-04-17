@@ -1,16 +1,24 @@
 ﻿using MinhasFinancas.Common.Models.Enums;
+using MinhasFinancas.Common.Models.Usuarios;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+using System.Transactions;
 
-namespace MinhasFinancas.Common.DTOs
+namespace MinhasFinancas.Common.Models
 {
-    public class TransacaoResponseDto
+    public class Transacao
     {
         public Guid TransacaoId { get; set; }
+        public Guid UsuarioId { get; set; }
         public Guid CategoriaId { get; set; }
 
         [MaxLength(500)]
         public string? Descricao { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Valor { get; set; }
         public DateTime DataCadastro { get; set; }
         public DateTime? DataPagamento { get; set; }
@@ -22,7 +30,14 @@ namespace MinhasFinancas.Common.DTOs
         public StatusTransacao Status { get; set; }
         public TipoPagamento TipoPagamento { get; set; }
 
-        public string? Usuario { get; set; }
-        public string? Categoria { get; set; }
+        public virtual Usuario? Usuario { get; set; }    
+        public virtual Categoria? Categoria { get; set; }
+
+        public void DefinirStatus()
+        {
+            Status = DataPagamento.HasValue
+                ? StatusTransacao.Concluida
+                : StatusTransacao.Pendente;
+        }
     }
 }

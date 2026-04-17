@@ -1,158 +1,151 @@
 ﻿@page "/"
+@using MinhasFinancas.Blazor.Components
 @attribute [Authorize]
 
+<AppBreadcrumb Items="_items" />
+
 <MudGrid Justify="Justify.Center" Class="my-8">
-    <MudItem xs="12" sm="6" md="4">
-        <MudContainer MaxWidth="MaxWidth.False">
-            <MudCard Elevation="3" Class="pa-6">
-                <MudCardContent>
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12" sm="8" md="6">
-                            <MudSelect T="string"
-                                       Label="Selecione o mês"
-                                       @bind-Value="selectedMonth"
-                                       Variant="Variant.Outlined"
-                                       Margin="Margin.Dense"
-                                       Class="mb-6">
-                                @foreach (var month in months)
-                                {
-                                    <MudSelectItem Value="@month">@month</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </MudItem>
-                    </MudGrid>
 
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudPaper Class="pa-6 text-center" Elevation="2">
-                                <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2">Saldo Atual</MudText>
-                                <MudText Class="text-h6 text-sm-h5 text-md-h3 font-bold"
-                                         Color="@(currentBalance >= 0 ? Color.Success : Color.Error)">
-                                    @FormatCurrency(currentBalance)
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+    <MudItem xs="12">
+        <MudCard Elevation="3" Class="pa-6">
+            <MudCardContent>
+                <MudSelect T="string"
+                           Label="Selecione o mês"
+                           Value="selectedMonth"
+                           ValueChanged="OnMonthChanged"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Class="mb-6"
+                           FullWidth>
+                    @foreach (var month in months)
+                    {
+                        <MudSelectItem Value="@month">@month</MudSelectItem>
+                    }
+                </MudSelect>
 
-                    <MudGrid Justify="Justify.Center" Class="mt-6">
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudIcon Icon="@Icons.Material.Filled.TrendingUp"
-                                         Size="Size.Large"
-                                         Color="Color.Success"
-                                         Class="mb-2" />
-                                <MudText Typo="Typo.h6" Class="mb-1">Receitas</MudText>
-                                <MudText Class="text-h6 text-sm-h5 font-bold"
-                                         Color="Color.Success">
-                                    @FormatCurrency(totalRevenue)
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
+                <MudPaper Class="pa-6 text-center" Elevation="2">
+                    <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2">Saldo Atual</MudText>
+                    <MudText Class="text-h6 text-sm-h5 text-md-h3 font-bold"
+                             Color="@(currentBalance >= 0 ? Color.Success : Color.Error)">
+                        @FormatCurrency(currentBalance)
+                    </MudText>
+                </MudPaper>
 
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudIcon Icon="@Icons.Material.Filled.TrendingDown"
-                                         Size="Size.Large"
-                                         Color="Color.Error"
-                                         Class="mb-2" />
-                                <MudText Typo="Typo.h6" Class="mb-1">Despesas</MudText>
-                                <MudText Class="text-h6 text-sm-h5 font-bold"
-                                         Color="Color.Error">
-                                    @FormatCurrency(totalExpense)
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
+                <MudGrid Class="mt-6">
+                    <MudItem xs="12" sm="6">
+                        <MudPaper Elevation="2" Class="pa-4 text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.TrendingUp"
+                                     Size="Size.Large"
+                                     Color="Color.Success"
+                                     Class="mb-2" />
+                            <MudText Typo="Typo.h6" Class="mb-1">Receitas</MudText>
+                            <MudText Class="text-h6 text-sm-h5 font-bold"
+                                     Color="Color.Success">
+                                @FormatCurrency(totalRevenue)
+                            </MudText>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudPaper Elevation="2" Class="pa-4 text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.TrendingDown"
+                                     Size="Size.Large"
+                                     Color="Color.Error"
+                                     Class="mb-2" />
+                            <MudText Typo="Typo.h6" Class="mb-1">Despesas</MudText>
+                            <MudText Class="text-h6 text-sm-h5 font-bold"
+                                     Color="Color.Error">
+                                @FormatCurrency(totalExpense)
+                            </MudText>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
     </MudItem>
 
-    <!-- CONTAINER 2 - CÓPIA VAZIA -->
-    <MudItem xs="12" sm="6" md="4">
-        <MudContainer MaxWidth="MaxWidth.False">
-            <MudCard Elevation="3" Class="pa-6">
-                <MudCardContent>
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12" sm="8" md="6">
-                            <!-- Select vazio -->
-                        </MudItem>
-                    </MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudCard Elevation="3" Class="pa-6">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2 text-center">
+                    Despesas por categoria
+                </MudText>
 
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudPaper Class="pa-6 text-center" Elevation="2">
-                                <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2">Título Card 2</MudText>
-                                <MudText Class="text-h6 text-sm-h5 text-md-h3 font-bold"
-                                         Color="Color.Primary">
-                                    Conteúdo
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                <MudPaper Class="pa-4">
+                    <MudChart T="double" ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@([data])" ChartLabels="@labels"></MudChart>
+                </MudPaper>
 
-                    <MudGrid Justify="Justify.Center" Class="mt-6">
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudText>Item 1</MudText>
-                            </MudPaper>
-                        </MudItem>
-
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudText>Item 2</MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
+            </MudCardContent>
+        </MudCard>
     </MudItem>
 
-    <!-- CONTAINER 3 - CÓPIA VAZIA -->
-    <MudItem xs="12" sm="6" md="4">
-        <MudContainer MaxWidth="MaxWidth.False">
-            <MudCard Elevation="3" Class="pa-6">
-                <MudCardContent>
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12" sm="8" md="6">
-                            <!-- Select vazio -->
-                        </MudItem>
-                    </MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudCard Elevation="3" Class="pa-6">
+            <MudCardContent>
 
-                    <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12">
-                            <MudPaper Class="pa-6 text-center" Elevation="2">
-                                <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2">Título Card 3</MudText>
-                                <MudText Class="text-h6 text-sm-h5 text-md-h3 font-bold"
-                                         Color="Color.Primary">
-                                    Conteúdo
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
+                <MudText Typo="Typo.h6" Typo-sm="Typo.h5" Class="mb-2 text-center">
+                    Balanço mensal
+                </MudText>
 
-                    <MudGrid Justify="Justify.Center" Class="mt-6">
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudText>Item 1</MudText>
-                            </MudPaper>
-                        </MudItem>
+                <MudGrid Class="mt-4">
 
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="2" Class="pa-4 text-center">
-                                <MudText>Item 2</MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
+                    <MudItem xs="3" Class="d-flex justify-center">
+                        <MudProgressLinear Vertical="true"
+                                           Value="65"
+                                           Color="Color.Primary"
+                                           Size="Size.Large"
+                                           Style="height:160px;">
+                            <MudText Typo="Typo.caption" Class="text-center">
+                                65%
+                            </MudText>
+                        </MudProgressLinear>
+                    </MudItem>
+
+                    <MudItem xs="9">
+
+                        <MudPaper Class="pa-4 text-center mb-3" Elevation="2">
+                            <MudText Class="text-h6 text-sm-h5 text-md-h4 font-bold"
+                                     Color="Color.Primary">
+                                R$ 2.450
+                            </MudText>
+                            <MudText Typo="Typo.caption">
+                                Saldo atual
+                            </MudText>
+                        </MudPaper>
+
+                        <MudGrid>
+                            <MudItem xs="6">
+                                <MudPaper Elevation="2" Class="pa-3 text-center">
+                                    <MudText Color="Color.Success">+ R$ 3.200</MudText>
+                                    <MudText Typo="Typo.caption">Entradas</MudText>
+                                </MudPaper>
+                            </MudItem>
+
+                            <MudItem xs="6">
+                                <MudPaper Elevation="2" Class="pa-3 text-center">
+                                    <MudText Color="Color.Error">- R$ 750</MudText>
+                                    <MudText Typo="Typo.caption">Saídas</MudText>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+
+                    </MudItem>
+
+                </MudGrid>
+
+            </MudCardContent>
+        </MudCard>
     </MudItem>
 
 </MudGrid>
 
 @code {
+    private List<BreadcrumbItem> _items =
+    [
+        new("Home", href: "/"),
+        new("Dashboard", href: null, disabled: true)
+    ];
+
     private string selectedMonth;
     private List<string> months = new List<string>
     {
@@ -166,17 +159,21 @@
 
     protected override void OnInitialized()
     {
-        // Seta o mês atual como padrão
         var currentMonth = DateTime.Now.Month;
         selectedMonth = months[currentMonth - 1];
-        
-        // Carrega os dados baseado no mês selecionado
+
         LoadDataForMonth(selectedMonth);
+    }
+
+    private void OnMonthChanged(string newMonth)
+    {
+        selectedMonth = newMonth;
+        LoadDataForMonth(selectedMonth);
+        StateHasChanged(); 
     }
 
     private void LoadDataForMonth(string month)
     {
-        // Dados mockados - você pode substituir pela sua lógica real
         switch (month)
         {
             case "Janeiro":
@@ -208,4 +205,9 @@
     {
         return value.ToString("C", new System.Globalization.CultureInfo("pt-BR"));
     }
+
+    int dataSize = 4;
+    public double[] data = { 50, 25, 20, 5 };
+    public string[] labels = { "Serviços", "Moradia", "Saúde", "Educação" };
+
 }

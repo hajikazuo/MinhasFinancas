@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MinhasFinancas.Common.DTOs.Account;
+using MinhasFinancas.Common.Models.Usuarios;
 using MinhasFinancas.Common.Services.Interfaces;
-using MinhasFinancas.Domain.Models.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

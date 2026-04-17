@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MinhasFinancas.Common.Data;
+using MinhasFinancas.Common.Models;
+using MinhasFinancas.Common.Models.Usuarios;
 using MinhasFinancas.Common.Services.Interfaces;
-using MinhasFinancas.Domain.Models;
-using MinhasFinancas.Domain.Models.Usuarios;
 using RT.Comb;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
 
 namespace MinhasFinancas.Common.Services
 {

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MinhasFinancas.API;
 using MinhasFinancas.Common.Data;
+using MinhasFinancas.Common.Models.Usuarios;
 using MinhasFinancas.Common.Services;
 using MinhasFinancas.Common.Services.Interfaces;
-using MinhasFinancas.Domain.Models.Usuarios;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MinhasFinancas.Common.DTOs.Account;
+using MinhasFinancas.Common.Models.Usuarios;
 using MinhasFinancas.Common.Services.Interfaces;
-using MinhasFinancas.Domain.Models.Usuarios;
 using RT.Comb;
 using System.Security.Claims;
 

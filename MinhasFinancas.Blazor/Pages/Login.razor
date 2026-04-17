@@ -9,16 +9,17 @@
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Navigation
 
-<MudGrid Justify="Justify.Center" Class="mt-6">
-    <MudItem xs="12" sm="8" md="5" lg="4">
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="height:100vh;">
+    
+    <MudPaper Class="pa-6" Elevation="8" Style="width:100%; border-radius:18px;">
 
-        <MudPaper Class="pa-6" Elevation="4">
+        <MudStack Spacing="3">
 
-            <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">
-                Minhas Finanças
+            <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
+                Minhas Finanças 
             </MudText>
 
-            <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mb-4">
+            <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mb-2">
                 Faça login para continuar
             </MudText>
 
@@ -26,7 +27,7 @@
 
                 @if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    <MudAlert Severity="Severity.Error" Class="mb-3">
+                    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-2">
                         @errorMessage
                     </MudAlert>
                 }
@@ -36,48 +37,72 @@
                               @bind-Value="loginModel.Email"
                               Required="true"
                               RequiredError="E-mail é obrigatório"
-                              Variant="Variant.Filled"
-                              Class="mb-3" />
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Email"
+                              Class="mb-2" />
 
                 <MudTextField T="string"
                               Label="Senha"
                               @bind-Value="loginModel.Password"
-                              InputType="InputType.Password"
+                              InputType="@(_showPassword ? InputType.Text : InputType.Password)"
                               Required="true"
                               RequiredError="Senha é obrigatória"
-                              Variant="Variant.Filled"
-                              Class="mb-4" />
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                              OnAdornmentClick="TogglePassword"
+                              Class="mb-1" />
 
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            FullWidth="true"
+                           Class="mt-2"
                            Disabled="@isLoading"
                            OnClick="HandleLogin">
 
-                    @(isLoading ? "Entrando..." : "Entrar")
+                    @if (isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                        <span>Entrando...</span>
+                    }
+                    else
+                    {
+                        <span>Entrar</span>
+                    }
 
                 </MudButton>
 
             </MudForm>
 
-            <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-4">
+            <MudDivider />
+
+            <MudText Typo="Typo.caption" Align="Align.Center">
                 Não tem conta?
                 <MudLink Href="/cadastro">Cadastre-se</MudLink>
             </MudText>
 
-        </MudPaper>
+        </MudStack>
 
-    </MudItem>
-</MudGrid>
+    </MudPaper>
+
+</MudContainer>
+
 
 @code {
     private LoginDto loginModel = new();
     private bool isLoading = false;
     private string errorMessage = string.Empty;
     private MudForm? _form;
+    private bool _showPassword;
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
+
+    private void TogglePassword()
+    {
+        _showPassword = !_showPassword;
+    }
 
     private async Task HandleLogin()
     {

@@ -1,11 +1,5 @@
-﻿using MinhasFinancas.Domain.Models;
-using MinhasFinancas.Domain.Models.Enums;
-using MinhasFinancas.Domain.Models.Usuarios;
-using System;
-using System.Collections.Generic;
+﻿using MinhasFinancas.Common.Models.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace MinhasFinancas.Common.DTOs
 {

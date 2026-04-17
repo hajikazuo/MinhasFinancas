@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MinhasFinancas.Domain.Models;
-using MinhasFinancas.Domain.Models.Usuarios;
+using MinhasFinancas.Common.Models;
+using MinhasFinancas.Common.Models.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.Data;

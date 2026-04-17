@@ -1,11 +1,12 @@
-﻿<MudDrawerHeader>
+﻿@using MinhasFinancas.Common.Models.Enums
+<MudDrawerHeader>
     <MudText Typo="Typo.h5" Class="mt-1">Minhas finanças</MudText>
 </MudDrawerHeader>
 <MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
     <MudNavGroup Title="Transações" Expanded="false">
-        <MudNavLink Href="/transacoes/despesas" Match="NavLinkMatch.Prefix">Despesas</MudNavLink>
-        <MudNavLink Href="/transacoes/receitas" Match="NavLinkMatch.Prefix">Receitas</MudNavLink>
+        <MudNavLink Href="@($"/transacoes/{TipoTransacao.Despesa}")" Match="NavLinkMatch.Prefix">Despesas</MudNavLink>
+        <MudNavLink Href="@($"/transacoes/{TipoTransacao.Receita}")" Match="NavLinkMatch.Prefix">Receitas</MudNavLink>
     </MudNavGroup>
     <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix">Sair</MudNavLink>
 </MudNavMenu>

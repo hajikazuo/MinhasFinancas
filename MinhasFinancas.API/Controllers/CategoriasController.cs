@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinhasFinancas.Common.Data;
 using MinhasFinancas.Common.DTOs;
-using MinhasFinancas.Domain.Models;
+using MinhasFinancas.Common.Models;
 using RT.Comb;
 using System.Security.Claims;
 

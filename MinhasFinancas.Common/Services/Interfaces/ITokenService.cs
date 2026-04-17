@@ -1,5 +1,5 @@
 ﻿using MinhasFinancas.Common.DTOs.Account;
-using MinhasFinancas.Domain.Models.Usuarios;
+using MinhasFinancas.Common.Models.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.Text;

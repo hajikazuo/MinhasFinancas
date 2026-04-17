@@ -2,5 +2,4 @@
   <Project Path="MinhasFinancas.API/MinhasFinancas.API.csproj" />
   <Project Path="MinhasFinancas.Blazor/MinhasFinancas.Blazor.csproj" Id="e22617b9-6238-495d-b6a2-ec6c36ad40cf" />
   <Project Path="MinhasFinancas.Common/MinhasFinancas.Common.csproj" />
-  <Project Path="MinhasFinancas.Domain/MinhasFinancas.Domain.csproj" />
 </Solution>

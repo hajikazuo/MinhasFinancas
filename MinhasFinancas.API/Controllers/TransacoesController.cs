@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinhasFinancas.Common.Data;
 using MinhasFinancas.Common.DTOs;
-using MinhasFinancas.Domain.Models;
-using MinhasFinancas.Domain.Models.Enums;
+using MinhasFinancas.Common.Models;
+using MinhasFinancas.Common.Models.Enums;
 using RT.Comb;
 using System.Security.Claims;
 
@@ -41,8 +41,8 @@ namespace MinhasFinancas.API.Controllers
 
             var query = _context.Transacoes
                 .Where(t => t.UsuarioId == userId && t.DataCadastro >= dataInicial && t.DataCadastro <= dataFinal).AsQueryable();
-                
-            if(tipo.HasValue)
+
+            if (tipo.HasValue)
             {
                 query = query.Where(t => t.TipoTransacao == tipo.Value);
             }

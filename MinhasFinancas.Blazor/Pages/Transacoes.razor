@@ -1,0 +1,31 @@
+﻿@page "/transacoes/{tipo}"
+@using MinhasFinancas.Common.DTOs
+@using MinhasFinancas.Common.Models.Enums
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>@TipoEnum</h3>
+
+@code {
+    [Parameter]
+    public string? tipo { get; set; }
+
+    public TipoTransacao TipoEnum { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!Enum.TryParse<TipoTransacao>(tipo, true, out var result))
+            return;
+
+        TipoEnum = result;
+
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        var httpClient = HttpClientFactory.CreateClient("ApiClient");
+
+        var response = await httpClient.GetFromJsonAsync<List<TransacaoResponseDto>>(
+            $"api/Transacoes/Get?tipo={TipoEnum}");
+    }
+}
